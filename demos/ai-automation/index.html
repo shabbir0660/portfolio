@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Automation Solutions | Dashboard (Concept Demo)</title>
+<style>
+:root{--bg:#070b1d;--s1:#0e1430;--s2:#141c3f;--line:#212b5a;--text:#e8ecff;--mut:#8f9ad0;--a:#5b8cff;--b:#8b5cf6;--c:#22d3ee;--ok:#34d399;--warn:#fbbf24}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(900px 500px at 80% -10%,rgba(91,140,255,.18),transparent 70%),radial-gradient(700px 400px at 0% 100%,rgba(139,92,246,.15),transparent 70%),var(--bg);color:var(--text);font:14.5px/1.55 system-ui,'Segoe UI',Roboto,sans-serif;min-height:100vh}
+button,input{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);background:rgba(8,12,30,.7);padding:22px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;padding:0 8px 26px}.logo i{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;font-style:normal;box-shadow:0 0 24px rgba(91,140,255,.5)}
+.lnk{display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:10px;color:var(--mut);width:100%;text-align:left;transition:.2s;margin-bottom:4px}.lnk:hover{background:var(--s2);color:#fff}.lnk.on{background:linear-gradient(90deg,rgba(91,140,255,.22),rgba(139,92,246,.1));color:#fff;box-shadow:inset 2px 0 0 var(--a)}
+.side-foot{margin-top:auto;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--s1);font-size:12.5px;color:var(--mut)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;animation:pulse 1.6s infinite}@keyframes pulse{50%{opacity:.3}}
+main{padding:26px 32px 60px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:14px}.top h1{font-size:24px;letter-spacing:-.02em}.top p{color:var(--mut)}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--c));display:grid;place-items:center;font-weight:700}
+.view{display:none}.view.on{display:block;animation:in .45s}@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}.kpi,.card{background:linear-gradient(180deg,rgba(20,28,63,.8),rgba(14,20,48,.8));border:1px solid var(--line);border-radius:16px;padding:20px;backdrop-filter:blur(6px)}
+.kpi small{color:var(--mut);display:block}.kpi b{font-size:30px;letter-spacing:-.02em;display:block;margin:4px 0}.kpi span{font-size:12.5px;color:var(--ok)}
+.row2{display:grid;grid-template-columns:1.7fr 1fr;gap:16px}.card h3{font-size:15px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}.card h3 small{color:var(--mut);font-weight:400}
+.rn{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px;animation:in .5s}.rn:last-child{border:0}.rn small{color:var(--mut);display:block}
+.pill{font-size:11.5px;padding:3px 11px;border-radius:99px;border:1px solid}.pill.ok{color:var(--ok);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}.pill.run2{color:var(--warn);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}.pill.err{color:#f87171;border-color:rgba(248,113,113,.4)}
+.btn{background:linear-gradient(135deg,var(--a),var(--b));padding:10px 20px;border-radius:10px;font-weight:600;box-shadow:0 8px 24px rgba(91,140,255,.3);transition:.25s}.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(91,140,255,.5)}.btn:disabled{opacity:.5;transform:none}.btn.o{background:var(--s2);box-shadow:none;border:1px solid var(--line)}
+/* builder */
+.builder{display:grid;grid-template-columns:1fr 280px;gap:16px}.canvas{position:relative;height:520px;border:1px solid var(--line);border-radius:16px;background-color:#0a1030;background-image:radial-gradient(#2a3670 1px,transparent 1.2px);background-size:24px 24px;overflow:hidden;touch-action:none}
+.canvas svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.node{position:absolute;width:190px;padding:12px 14px;border-radius:14px;background:var(--s2);border:1px solid var(--line);cursor:grab;user-select:none;transition:box-shadow .3s,border-color .3s;display:flex;gap:10px;align-items:center}.node:active{cursor:grabbing}
+.node i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;flex:none;font-size:16px}.node b{display:block;font-size:13.5px}.node small{color:var(--mut);font-size:11.5px}
+.node.run{box-shadow:0 0 0 2px var(--warn),0 0 30px rgba(251,191,36,.35);border-color:var(--warn);display:flex;padding:12px 14px}.node.done{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.pal{display:flex;flex-direction:column;gap:8px}.pal button{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--s2);border:1px solid var(--line);text-align:left;transition:.2s}.pal button:hover{border-color:var(--a);transform:translateX(3px)}.pal i{font-style:normal;width:28px;height:28px;border-radius:8px;display:grid;place-items:center}
+.log{font:12px/1.7 ui-monospace,Menlo,Consolas,monospace;color:#a9b4ee;background:#060a1c;border:1px solid var(--line);border-radius:10px;padding:12px;height:170px;overflow:auto;margin-top:14px}.log .g{color:var(--ok)}.log .y{color:var(--warn)}
+/* chat */
+.chat{display:flex;flex-direction:column;height:calc(100vh - 150px);min-height:480px;max-width:820px;margin:0 auto}.msgs{flex:1;overflow:auto;padding:6px 4px 14px;display:flex;flex-direction:column;gap:12px}
+.m{max-width:80%;padding:12px 16px;border-radius:16px;animation:in .35s;white-space:pre-line}.m.bot{background:var(--s2);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}.m.me{background:linear-gradient(135deg,var(--a),var(--b));align-self:flex-end;border-bottom-right-radius:4px}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mut);margin:0 2px;animation:bounce 1s infinite}.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}@keyframes bounce{50%{transform:translateY(-5px);opacity:.4}}
+.sug{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}.sug button{padding:8px 16px;border:1px solid var(--a);border-radius:99px;color:#bcd0ff;font-size:13px;transition:.2s}.sug button:hover{background:var(--a);color:#fff}
+.inp{display:flex;gap:10px}.inp input{flex:1;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:13px 16px;outline:0}.inp input:focus{border-color:var(--a)}
+/* analytics */
+.bars{display:flex;align-items:flex-end;gap:14px;height:220px;padding-top:10px}.bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}.bars i{width:100%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--a),var(--b));transition:height .9s cubic-bezier(.2,.8,.2,1);height:0}.bars small{color:var(--mut);font-size:12px}.bars b{font-size:12px}
+.prog{height:8px;border-radius:99px;background:var(--s2);overflow:hidden;margin-top:6px}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--c));border-radius:99px}
+.tw{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-top:16px}
+.demo-badge{position:fixed;right:14px;bottom:14px;background:rgba(14,20,48,.95);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:11px;color:var(--mut);z-index:90}.demo-badge a{color:var(--c)}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px;gap:4px;align-items:center}.logo{padding:0 10px 0 0}.lnk{width:auto;padding:8px 12px;margin:0}.side-foot{display:none}main{padding:20px 16px 60px}.kpis{grid-template-columns:1fr 1fr}.row2,.builder,.tw{grid-template-columns:1fr}}
+</style></head><body>
+<div class="app">
+<aside><div class="logo"><i>&#10022;</i> AutoMind AI</div>
+<button class="lnk on" data-v="overview">&#9638; Overview</button><button class="lnk" data-v="flow">&#8644; Workflows</button><button class="lnk" data-v="chat">&#9993; AI Assistant</button><button class="lnk" data-v="stats">&#9650; Analytics</button>
+<div class="side-foot"><span class="dot"></span>All systems operational<br><small>Concept demo &middot; sample data</small></div></aside>
+<main>
+<div class="top"><div><h1 id="ttl">Good morning, Admin</h1><p id="sub">Here is what your automations did overnight.</p></div><div class="av">A</div></div>
+
+<section class="view on" id="v-overview">
+<div class="kpis" id="kpis"></div>
+<div class="row2"><div class="card"><h3>Automation runs <small>last 14 days</small></h3><svg id="area" viewBox="0 0 600 220" width="100%"></svg></div>
+<div class="card"><h3>Live activity <small><span class="dot"></span>real-time</small></h3><div id="runs"></div></div></div></section>
+
+<section class="view" id="v-flow"><div class="builder"><div><div class="canvas" id="canvas"><svg id="wires"></svg></div><div class="log" id="log"><span style="color:#5d6aa8">// Workflow console. Drag nodes to rearrange, then press Run.</span></div></div>
+<div class="card"><h3>Add step</h3><div class="pal" id="pal"></div><div style="display:flex;gap:8px;margin-top:18px"><button class="btn" id="runBtn" style="flex:1">&#9654; Run workflow</button><button class="btn o" id="reset">Reset</button></div></div></div></section>
+
+<section class="view" id="v-chat"><div class="chat"><div class="msgs" id="msgs"></div><div class="sug" id="sug"></div><form class="inp" id="cf"><input id="ci" placeholder="Ask about leads, reports, workflows..." autocomplete="off"><button class="btn">Send</button></form></div></section>
+
+<section class="view" id="v-stats"><div class="kpis" id="k2"></div><div class="tw"><div class="card"><h3>Runs by weekday</h3><div class="bars" id="bars"></div></div>
+<div class="card"><h3>Workflow health</h3><div id="health"></div></div></div></section>
+</main></div>
+<div class="demo-badge">Concept demo &middot; no real AI calls <a id="back" href="../../index.html#portfolio">&larr; Back to portfolio</a></div>
+<script>
+if(window.self!==window.top)document.getElementById('back').style.display='none';
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const T={overview:['Good morning, Admin','Here is what your automations did overnight.'],flow:['Workflow Builder','Design an automation and watch it run step by step.'],chat:['AI Assistant','Ask the assistant to help manage leads and workflows.'],stats:['Performance Analytics','How your automations are performing this week.']};
+function go(v){$$('.lnk').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));$('#ttl').textContent=T[v][0];$('#sub').textContent=T[v][1];if(v==='flow')wires();if(v==='stats')bars()}
+$$('.lnk').forEach(b=>b.onclick=()=>go(b.dataset.v));
+/* KPIs */
+function kp(el){el.innerHTML=[['Automations run','1,248','+12.4% this week'],['Active workflows','8','2 added recently'],['Time saved','126 h','+9.1% vs last week'],['Success rate','98.2%','+0.6% vs last week']].map(([a,b,c])=>`<div class="kpi"><small>${a}</small><b>${b}</b><span>&#9650; ${c}</span></div>`).join('')}kp($('#kpis'));kp($('#k2'));
+/* area chart */
+const D=[34,41,38,52,49,63,58,72,66,81,77,90,86,104];
+(function(){const W=600,H=220,mx=120,pts=D.map((v,i)=>[20+i*(W-40)/(D.length-1),H-24-v/mx*(H-50)]);const l=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
+$('#area').innerHTML=`<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b8cff" stop-opacity=".45"/><stop offset="1" stop-color="#5b8cff" stop-opacity="0"/></linearGradient></defs>${[0,1,2,3].map(i=>`<line x1="20" x2="580" y1="${30+i*50}" y2="${30+i*50}" stroke="#212b5a" stroke-dasharray="3 5"/>`).join('')}<path d="${l}L580 ${H-24}L20 ${H-24}Z" fill="url(#ag)"/><path d="${l}" fill="none" stroke="#7aa2ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="1400" stroke-dashoffset="1400"><animate attributeName="stroke-dashoffset" to="0" dur="1.6s" fill="freeze"/></path>${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#0e1430" stroke="#a5c0ff" stroke-width="2"/>`).join('')}<text x="20" y="214" fill="#8f9ad0" font-size="11">14 days ago</text><text x="548" y="214" fill="#8f9ad0" font-size="11">Today</text>`})();
+/* live runs */
+const WF=['New lead &rarr; CRM sync','Invoice reminder email','Weekly report generation','Support ticket triage','Social post scheduler','Lead qualification (AI)'];let rc=0;
+function addRun(){const w=WF[rc++%WF.length],ok=Math.random()>.08;const d=document.createElement('div');d.className='rn';d.innerHTML=`<div>${w}<small>just now</small></div><span class="pill ${ok?'ok':'err'}">${ok?'Success':'Retrying'}</span>`;$('#runs').prepend(d);while($('#runs').children.length>6)$('#runs').lastChild.remove()}
+for(let i=0;i<5;i++)addRun();setInterval(addRun,3200);
+/* builder */
+const TY={trigger:['#34d399','&#9889;','Trigger'],ai:['#8b5cf6','&#10022;','AI step'],email:['#5b8cff','&#9993;','Email'],crm:['#22d3ee','&#9776;','CRM'],notify:['#fbbf24','&#128276;','Notify'],cond:['#f472b6','&#10070;','Condition']};
+const START=[{t:'trigger',n:'New Lead',s:'Form submitted',x:30,y:30},{t:'ai',n:'AI Qualify',s:'Score the lead',x:260,y:110},{t:'cond',n:'Score > 70?',s:'Branch logic',x:50,y:210},{t:'email',n:'Send Email',s:'Welcome sequence',x:280,y:290},{t:'crm',n:'Add to CRM',s:'Create contact',x:60,y:390}];
+let nodes=[];function reset(){nodes=JSON.parse(JSON.stringify(START));draw();$('#log').innerHTML='<span style="color:#5d6aa8">// Workflow console. Drag nodes to rearrange, then press Run.</span>'}
+function draw(){$$('.node').forEach(n=>n.remove());nodes.forEach((n,i)=>{const [c,ic]=TY[n.t];const e=document.createElement('div');e.className='node';e.dataset.i=i;e.style.left=n.x+'px';e.style.top=n.y+'px';e.innerHTML=`<i style="background:${c}22;color:${c}">${ic}</i><div><b>${n.n}</b><small>${n.s}</small></div>`;$('#canvas').appendChild(e)});wires()}
+function wires(){const w=$('#wires');let h='';for(let i=0;i<nodes.length-1;i++){const a=nodes[i],b=nodes[i+1],x1=a.x+95,y1=a.y+54,x2=b.x+95,y2=b.y,my=(y1+y2)/2;h+=`<path d="M${x1} ${y1}C${x1} ${my} ${x2} ${my} ${x2} ${y2}" fill="none" stroke="#5b8cff" stroke-width="2" stroke-opacity=".7" stroke-dasharray="5 6"><animate attributeName="stroke-dashoffset" from="22" to="0" dur="1s" repeatCount="indefinite"/></path><circle cx="${x2}" cy="${y2}" r="4" fill="#8b5cf6"/>`}w.innerHTML=h}
+let drag=null;$('#canvas').addEventListener('pointerdown',e=>{const n=e.target.closest('.node');if(!n)return;const r=n.getBoundingClientRect();drag={n,i:+n.dataset.i,dx:e.clientX-r.left,dy:e.clientY-r.top};n.setPointerCapture(e.pointerId)});
+$('#canvas').addEventListener('pointermove',e=>{if(!drag)return;const c=$('#canvas').getBoundingClientRect(),x=Math.max(0,Math.min(c.width-190,e.clientX-c.left-drag.dx)),y=Math.max(0,Math.min(c.height-60,e.clientY-c.top-drag.dy));nodes[drag.i].x=x;nodes[drag.i].y=y;drag.n.style.left=x+'px';drag.n.style.top=y+'px';wires()});
+addEventListener('pointerup',()=>drag=null);
+$('#pal').innerHTML=Object.entries(TY).map(([k,[c,ic,l]])=>`<button data-k="${k}"><i style="background:${c}22;color:${c}">${ic}</i>${l}</button>`).join('');
+$('#pal').onclick=e=>{const b=e.target.closest('button');if(!b||nodes.length>=8)return;const l=nodes[nodes.length-1],[c,ic,lab]=TY[b.dataset.k];nodes.push({t:b.dataset.k,n:lab,s:'New step',x:(l.x>150?40:260),y:Math.min(l.y+80,450)});draw()};
+$('#reset').onclick=reset;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));const logl=(t,c='')=>{$('#log').insertAdjacentHTML('beforeend',`<div class="${c}">${t}</div>`);$('#log').scrollTop=1e5};
+$('#runBtn').onclick=async()=>{const b=$('#runBtn');b.disabled=true;$$('.node').forEach(n=>n.classList.remove('run','done'));logl('&gt; Starting workflow...','y');const t0=Date.now();
+for(let i=0;i<nodes.length;i++){const el=$$('.node')[i];el.classList.add('run');logl(`[${i+1}/${nodes.length}] ${nodes[i].n}: running...`);await wait(750);el.classList.remove('run');el.classList.add('done');logl(`[${i+1}/${nodes.length}] ${nodes[i].n}: <span class="g">done</span>`)}
+logl(`&#10003; Workflow completed in ${((Date.now()-t0)/1000).toFixed(1)}s`,'g');b.disabled=false;addRun()};
+reset();
+/* chat */
+const KB=[[/lead|crm|prospect/,'You have 42 new leads today. 11 are scored above 70 and ready for follow-up.\nWant me to send them the welcome sequence?'],[/report|summary|weekly/,'Your weekly report is ready:\n- 1,248 automations run (+12.4%)\n- 126 hours saved\n- 98.2% success rate\nI can email it to your team.'],[/schedule|call|meeting|book/,'Done. I have scheduled a call for tomorrow at 11:00 AM and sent a calendar invite with a reminder 30 minutes before.'],[/workflow|automat/,'You have 8 active workflows. The newest one, "Lead qualification (AI)", ran 214 times with a 99% success rate. Open the Workflows tab to edit it.'],[/support|customer|ticket/,'Customer support: 17 open tickets, average first response 6 minutes. 9 were resolved automatically by the assistant today.'],[/hello|hi|hey|help/,'Hello! I can summarise leads, build reports, schedule calls and manage your automations. What would you like to do?']];
+const SUG=['Lead generation','Customer support','Schedule a call','Weekly report'];
+function msg(t,c){const d=document.createElement('div');d.className='m '+c;d.textContent=t;$('#msgs').appendChild(d);$('#msgs').scrollTop=1e5;return d}
+msg('How can I help you today?','bot');
+$('#sug').innerHTML=SUG.map(s=>`<button>${s}</button>`).join('');$('#sug').onclick=e=>{if(e.target.tagName==='BUTTON')ask(e.target.textContent)};
+async function ask(q){msg(q,'me');const t=document.createElement('div');t.className='m bot typing';t.innerHTML='<span></span><span></span><span></span>';$('#msgs').appendChild(t);$('#msgs').scrollTop=1e5;await wait(900);t.remove();const k=KB.find(([r])=>r.test(q.toLowerCase()));msg(k?k[1]:'I can help with leads, reports, scheduling and workflows. Try asking for a "weekly report" or "new leads".','bot')}
+$('#cf').onsubmit=e=>{e.preventDefault();const v=$('#ci').value.trim();if(!v)return;$('#ci').value='';ask(v)};
+/* analytics */
+function bars(){const v=[62,78,91,84,102,48,35],d=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];$('#bars').innerHTML=v.map((x,i)=>`<div><b>${x}</b><i data-h="${x/110*100}%"></i><small>${d[i]}</small></div>`).join('');setTimeout(()=>$$('#bars i').forEach(i=>i.style.height=i.dataset.h),60)}
+$('#health').innerHTML=[['Lead qualification (AI)',99],['Invoice reminders',97],['Weekly reports',100],['Support triage',94],['Social scheduler',91]].map(([n,p])=>`<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${n}</span><b>${p}%</b></div><div class="prog"><i style="width:${p}%"></i></div></div>`).join('');
+</script></body></html>
